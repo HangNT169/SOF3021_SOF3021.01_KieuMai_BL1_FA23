@@ -7,6 +7,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
 
@@ -43,5 +46,41 @@ public class SinhVienController {
     public String xoaSinhVien(@PathVariable("ma") String ma) {
         sinhVienService.removeSinhVien(ma);
         return "redirect:/sinh-vien/hien-thi";
+    }
+
+    @GetMapping("/sinh-vien/view-add")
+    public String viewAdd() {
+        return "buoi3/add-sinh-vien";
+    }
+
+    @PostMapping("/sinh-vien/add")
+    public String addSinhVien(@RequestParam("mssv") String mssv,
+                              @RequestParam("ten") String ten1,
+                              @RequestParam("tuoi") String tuoi,
+                              @RequestParam("diaChi") String diaChi,
+                              @RequestParam("gioiTinh") String gioiTinh) {
+        // B1: Khoi tao doi tuong
+        SinhVien sv = SinhVien.builder()
+                .ten(ten1)
+                .maSV(mssv)
+                .tuoi(Integer.valueOf(tuoi))
+                .diaChi(diaChi)
+                .gioiTinh(Boolean.valueOf(gioiTinh))
+                .build();
+        // B2: Goi add trong service
+        sinhVienService.addSinhVien(sv);
+        // B3: Quay lai trang chu
+        return "redirect:/sinh-vien/hien-thi";
+    }
+
+    /**
+     * Spring form , spring validation
+     */
+
+    @GetMapping("/test")
+    @ResponseBody // Trong controller bat buoc phai danh dau @responsebody
+    // 1 api => 1 json(mac dinh), xml
+    public List<SinhVien> getAll() {
+        return sinhVienService.getAll();
     }
 }
